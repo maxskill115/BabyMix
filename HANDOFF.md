@@ -62,3 +62,10 @@ Cập nhật 06/09/2026. Bản local, chưa publish. BabyMix khác Baby1/Baby2: 
 2. **Lời kể 42 tháng tuổi**: `build-story-observations.py` thêm `MONTH_STORIES` (viết tay theo review) + `build_months()` tự nhóm media theo tuổi Cá, gắn evidence 3 ảnh/tháng → card nhật ký tháng không còn mô tả chung. Các tháng không có media tự bỏ qua (VD tháng 41 = 05/2026).
 3. **Bổ sung video vào chương**: thêm video vào 7 chương (Chào em Cá +1, Bốn người +2, Chị ôm em +4, Ngủ với ba +1, Bạn thú +2, Yên 3 tuổi +1, Ghế gaming +3) và **chương mới 13 "Yên tập viết những chữ đầu tiên"** (29/07/2025, 5 video tập viết — poster trắng do video quay nền giấy, đã ghi chú context). Video "xe đẩy" 2023-02-17_2 sau khi xem thực tế là hai chị em trên giường → không ghép vào chương xe đẩy, để ở nhật ký tháng.
 - Dọn 6 lỗi văn bản rác (từ liệu tiếng Trung/Đức lọt từ lúc soạn) trong cả 3 build script Baby1/Baby2/BabyMix; sửa tháng 29 ghi nhầm năm.
+
+## TÁCH REPO RIÊNG & PUSH GITHUB (06/09/2026)
+- Site đã tách khỏi Discovery, repo riêng: **https://github.com/maxskill115/BabyMix** — local: `F:/0.Tools/fingermath/BabyMix`.
+- Push đầy đủ media + video theo đợt ≤350MB bằng `F:/0.Tools/fingermath/push-batched.py` (script dùng chung, idempotent, tự retry/rebase).
+- **4 file video >100MB bị GitHub chặn cứng, KHÔNG lên được, giữ local** (xem `.gitignore`): không có (video lớn nhất <100MB)
+- Cấu trúc giữ nguyên (assets/css/js/data/scripts); `.gitignore` repo: contact-sheets + IMG_checked/ + Video_checked/ (bản gốc trùng lặp với display) + video assets/babymix/videos/ ĐÃ push lên repo.
+- Sau này đổi tên project/domain trên Vercel thì nhớ cập nhật link card trong repo Discovery (`app.js`).
