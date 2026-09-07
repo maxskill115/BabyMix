@@ -61,19 +61,26 @@
       (viewer.querySelector(".media-viewer__panel") || viewer).appendChild(tag);
     }
     var currentName = "";
-    function copyText(text) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        return navigator.clipboard.writeText(text);
-      }
+    function copyWithExecCommand(text) {
+      // Clipboard API can be denied by Permissions Policy when this site is
+      // opened inside Discovery's cross-origin iframe. execCommand remains a
+      // useful user-gesture fallback in that situation.
       var helper = document.createElement("textarea");
       helper.value = text;
       helper.style.position = "fixed";
       helper.style.opacity = "0";
       document.body.appendChild(helper);
       helper.select();
-      try { document.execCommand("copy"); } catch (error) {}
-      document.body.removeChild(helper);
-      return Promise.resolve();
+      try { return document.execCommand("copy"); } catch (error) { return false; }
+      finally { document.body.removeChild(helper); }
+    }
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(function () {
+          return copyWithExecCommand(text);
+        });
+      }
+      return Promise.resolve(copyWithExecCommand(text));
     }
     tag.title = "Bấm để copy tên file";
     tag.addEventListener("click", function () {
