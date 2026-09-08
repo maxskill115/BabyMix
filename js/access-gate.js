@@ -155,6 +155,7 @@
     await loadScript(jsBase + asset(["media", "-ux", ".js"]));
     await loadScript(jsBase + asset(["gallery", "-enhancer", ".js"]));
     await loadScript(jsBase + "media-filename.js");
+    await loadScript(jsBase + "video-hover-preview.js");
   }
 
   function showError(message) {
