@@ -171,5 +171,11 @@
     openGallery(scene);
   });
 
+  // media-ux gọi khi bấm × trong viewer ảnh/video của album: quay về sảnh album
+  window.__reopenGallery = function (sceneId) {
+    const scene = data.scenes.find(function (item) { return item.id === sceneId; });
+    if (scene) openGallery(scene);
+  };
+
   attachButtons();
 })();

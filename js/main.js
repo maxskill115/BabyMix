@@ -425,7 +425,18 @@
   });
 
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && !viewer.hidden) closeMedia();
+    if (event.key === "Escape" && !viewer.hidden) {
+      // đang xem 1 ảnh/video trong album → quay về sảnh album thay vì thoát hẳn
+      if (window.__reopenGallery && viewerContent.querySelector(".b3-viewer")) {
+        const activeScene = document.querySelector(".b3-viewer");
+        const meta = activeScene && activeScene.getAttribute("data-gallery-scene");
+        event.preventDefault();
+        closeMedia();
+        if (meta) window.__reopenGallery(meta);
+        return;
+      }
+      closeMedia();
+    }
   });
 
   buildJourney();

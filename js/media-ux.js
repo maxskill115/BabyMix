@@ -102,7 +102,7 @@
     };
 
     viewerContent.innerHTML =
-      '<div class="b3-viewer">' +
+      '<div class="b3-viewer" data-gallery-scene="' + escapeHtml(scene.id) + '">' +
         '<div class="b3-viewer__stage">' + renderViewerMedia(media) + '</div>' +
         '<div class="b3-viewer__meta">' +
           '<div><strong>' + escapeHtml(day.dateLabel || day.date || "") + '</strong>' +
@@ -181,11 +181,13 @@
     });
   }
 
+  let currentGalleryFilter = "all";
+
   function onViewerContentChanged() {
     const galleryView = viewerContent.querySelector(".gallery-view");
     if (galleryView) {
       installLazyImages(galleryView);
-      applyFilter(galleryView, "all");
+      applyFilter(galleryView, currentGalleryFilter);
     }
   }
 
@@ -212,11 +214,24 @@
     if (filter) {
       event.preventDefault();
       const view = filter.closest(".gallery-view");
-      if (view) applyFilter(view, filter.dataset.galleryFilter || "all");
+      currentGalleryFilter = filter.dataset.galleryFilter || "all";
+      if (view) applyFilter(view, currentGalleryFilter);
       return;
     }
 
     if (event.target.closest("[data-close-viewer]")) {
+      if (galleryContext && viewerContent.querySelector(".b3-viewer")) {
+        // đang xem 1 ảnh/video trong album → quay về sảnh album, không thoát hẳn
+        const scene = findScene(galleryContext.sceneId);
+        const back = scene && scene.galleryMedia ? scene : null;
+        galleryContext = null;
+        if (back && typeof window.__reopenGallery === "function") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.__reopenGallery(back.id);
+          return;
+        }
+      }
       galleryContext = null;
       if (lazyObserver) {
         lazyObserver.disconnect();
