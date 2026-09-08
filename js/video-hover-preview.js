@@ -95,11 +95,12 @@
     if (isTouchLike(event)) return;
     var thumb = findVideoThumb(event.target);
     if (!thumb) return;
+    // di chuyen giua cac phan tu con (poster -> video preview moi chen vo, icon...)
+    // KHONG coi la roi thumbnail; chi dung khi con tro that su ra ngoai thumb
+    if (event.relatedTarget && thumb.contains(event.relatedTarget)) return;
     if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-    if (thumb === activeThumb || thumb === hoverThumb) {
-      hoverThumb = null;
-      stopPreview();
-    }
+    hoverThumb = null;
+    stopPreview();
   }, true);
 
   // Mobile: chạm giữ
@@ -127,6 +128,9 @@
     if (suppressedClick) {
       event.stopPropagation();
       event.preventDefault();
+      return;
     }
+    var thumb = findVideoThumb(event.target);
+    if (thumb) stopPreview();
   }, true);
 })();
