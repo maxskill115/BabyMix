@@ -81,3 +81,9 @@ Cập nhật 06/09/2026. Bản local, chưa publish. BabyMix khác Baby1/Baby2: 
 - Nguyên nhân: khi `<video>` preview được chèn vào thumbnail, chuột "nhảy" từ poster sang video mới → trình duyệt sinh `pointerout` (relatedTarget = video preview) → handler cũ hiểu là rời thumbnail → tắt preview ngay (pointerout cascade).
 - Fix: trong `pointerout`, bỏ qua khi `relatedTarget` vẫn nằm trong thumb (`thumb.contains(relatedTarget)`); chỉ dừng preview khi con trỏ rời khỏi thumb thật sự. Desktop click vào thumb đang preview: stop preview rồi vẫn mở viewer bình thường.
 - Test chuột THẬT (Playwright mouse.move sinh đủ pointer events + cascade): hover 1.2s → playing; di chuyển vòng trong thumb (qua video mới chèn) → vẫn phát; rời hẳn → dừng. Commit `0fca035` (Baby1), đồng bộ 3 site.
+
+### Fix 2 bug album (06/09/2026, phản hồi người dùng)
+- **Bug "đóng media thoát hẳn ra ngoài"**: bấm × (hoặc Escape) khi đang xem 1 ảnh/video trong album giờ quay về **SẢNH ALBUM** thay vì đóng viewer; bấm × / Escape lần 2 từ sảnh mới thoát hẳn. Cơ chế: media-ux bắt `[data-close-viewer]` khi có `.b3-viewer` + galleryContext → gọi `window.__reopenGallery(sceneId)` (bridge trong gallery-enhancer render lại sảnh); main.js xử lý Escape tương tự qua `data-gallery-scene` mới gắn trên `.b3-viewer`.
+- **Bug filter reset khi cuộn**: nguyên nhân `onViewerContentChanged` (MutationObserver của lazy-load) luôn gọi `applyFilter(view, "all")` mỗi khi DOM album đổi → mỗi lần cuộn xuống, ảnh lazy-load gắn src → filter rơi về "Tất cả". Fix: biến `currentGalleryFilter` ghi nhớ lựa chọn; observer áp filter hiện tại thay vì "all".
+- Test Playwright full flow PASS: lọc Video → cuộn dài 2 lần → vẫn "video" (57 video, 0 ảnh lọt); mở 1 video → Escape → "SẢNH ALBUM" → Escape → đóng hẳn; nút × 2 tầng tương tự; 0 JS error.
+- Lưu ý: album không có nút lọc khi scene chỉ chứa 1 loại media (renderFilters trả rỗng) — filter check phải test ở album đủ cả ảnh + video.
