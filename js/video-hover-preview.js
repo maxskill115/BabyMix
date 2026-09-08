@@ -31,9 +31,10 @@
   }
 
   function findVideoThumb(target) {
-    var thumb = target && (target.closest ? target.closest(".gallery-thumb") : null);
+    var thumb = target && (target.closest ? target.closest(".gallery-thumb, .media-slot") : null);
     if (!thumb) return null;
-    if (thumb.getAttribute("data-media-kind") !== "video") return null;
+    var isVideo = thumb.getAttribute("data-media-kind") === "video" || thumb.getAttribute("data-type") === "video";
+    if (!isVideo) return null;
     if (thumb.getAttribute("data-video-thumb-src") || thumb.getAttribute("data-src")) return thumb;
     return null;
   }
