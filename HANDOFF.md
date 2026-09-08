@@ -75,3 +75,9 @@ Cập nhật 06/09/2026. Bản local, chưa publish. BabyMix khác Baby1/Baby2: 
 - Performance chuẩn YouTube (đã test Playwright): cuộn full hành trình **0 MP4 nào được tải** (chỉ poster lazy); hover vào thumbnail nào chỉ tải đúng video đó.
 - Video hiển thị đè poster qua class `.is-previewing` (opacity poster → 0, video object-fit cover).
 - Lưu ý test bằng Playwright synthetic touch: phải dispatch TouchEvent có `touches` thật; `dispatch_event("touchstart")` không kèm touch list sẽ bị bỏ qua (đã nới điều kiện để hoạt động cả khi length != 1).
+
+### Fix hover-preview trên PC (06/09/2026, sau phản hồi người dùng)
+- Triệu chứng: mobile chạm giữ phát OK nhưng PC rê chuột không phát.
+- Nguyên nhân: khi `<video>` preview được chèn vào thumbnail, chuột "nhảy" từ poster sang video mới → trình duyệt sinh `pointerout` (relatedTarget = video preview) → handler cũ hiểu là rời thumbnail → tắt preview ngay (pointerout cascade).
+- Fix: trong `pointerout`, bỏ qua khi `relatedTarget` vẫn nằm trong thumb (`thumb.contains(relatedTarget)`); chỉ dừng preview khi con trỏ rời khỏi thumb thật sự. Desktop click vào thumb đang preview: stop preview rồi vẫn mở viewer bình thường.
+- Test chuột THẬT (Playwright mouse.move sinh đủ pointer events + cascade): hover 1.2s → playing; di chuyển vòng trong thumb (qua video mới chèn) → vẫn phát; rời hẳn → dừng. Commit `0fca035` (Baby1), đồng bộ 3 site.
